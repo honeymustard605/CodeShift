@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build-api",
+      "program": "${workspaceFolder}/src/api/CodeShift.Api/bin/Debug/net8.0/CodeShift.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/api/CodeShift.Api",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ConnectionStrings__Default": "Host=localhost;Database=codeshift;Username=codeshift;Password=localdev"
+      }
+    }
+  ]
+}

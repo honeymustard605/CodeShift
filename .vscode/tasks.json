@@ -1,0 +1,27 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build-api",
+      "command": "dotnet",
+      "args": ["build", "src/api/CodeShift.sln"],
+      "type": "process",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "test-api",
+      "command": "dotnet",
+      "args": ["test", "src/api/CodeShift.sln"],
+      "type": "process",
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "dev-web",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "type": "shell",
+      "options": { "cwd": "${workspaceFolder}/src/web" },
+      "isBackground": true
+    }
+  ]
+}
