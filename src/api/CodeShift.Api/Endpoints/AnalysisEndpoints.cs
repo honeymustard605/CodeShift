@@ -25,8 +25,31 @@ public static class AnalysisEndpoints
                 Directory.Delete(extractPath, recursive: true);
             Directory.CreateDirectory(extractPath);
 
-            using (var stream = file.OpenReadStream())
-                ZipFile.ExtractToDirectory(stream, extractPath);
+            using (var zipStream = file.OpenReadStream())
+            using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    // Skip macOS metadata folders and hidden files
+                    if (entry.FullName.StartsWith("__MACOSX/", StringComparison.OrdinalIgnoreCase) ||
+                        Path.GetFileName(entry.FullName).StartsWith("._"))
+                        continue;
+
+                    var destPath = Path.GetFullPath(Path.Combine(extractPath, entry.FullName));
+                    if (!destPath.StartsWith(extractPath))
+                        continue; // zip slip protection
+
+                    if (entry.FullName.EndsWith('/'))
+                    {
+                        Directory.CreateDirectory(destPath);
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(Path.GetDirectoryName(destPath)!);
+                        entry.ExtractToFile(destPath, overwrite: true);
+                    }
+                }
+            }
 
             var result = await analyzer.AnalyzeAsync(extractPath, CancellationToken.None);
 
