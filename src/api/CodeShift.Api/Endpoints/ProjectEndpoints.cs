@@ -1,5 +1,6 @@
 using CodeShift.Data;
 using CodeShift.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeShift.Api.Endpoints;
 

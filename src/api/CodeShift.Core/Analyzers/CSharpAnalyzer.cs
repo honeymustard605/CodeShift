@@ -85,8 +85,12 @@ public class CSharpAnalyzer : ICodebaseAnalyzer
 
     private static string DetectTargetFramework(string projectDir, string rootPath)
     {
+        var searchPath = Path.Combine(rootPath, projectDir);
+        if (!Directory.Exists(searchPath))
+            return "unknown";
+
         var csprojFiles = Directory.GetFiles(
-            Path.Combine(rootPath, projectDir),
+            searchPath,
             "*.csproj",
             SearchOption.TopDirectoryOnly);
 

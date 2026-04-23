@@ -15,7 +15,5 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CodeShift.Core\CodeShift.Core.csproj" />
-  </ItemGroup>
+
 </Project>

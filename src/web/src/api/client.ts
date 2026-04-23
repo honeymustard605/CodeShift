@@ -27,6 +27,16 @@ export const runAnalysis = (projectId: string, rootPath: string) =>
     .post<AnalysisResult>(`/projects/${projectId}/analysis`, { rootPath })
     .then((r) => r.data);
 
+export const uploadAndAnalyze = (projectId: string, file: File) => {
+  const form = new FormData();
+  form.append("file", file);
+  return api
+    .post<AnalysisResult>(`/projects/${projectId}/analysis/upload`, form, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then((r) => r.data);
+};
+
 export const getAnalysis = (projectId: string) =>
   api
     .get<AnalysisResult>(`/projects/${projectId}/analysis`)

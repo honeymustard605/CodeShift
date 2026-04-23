@@ -25,7 +25,7 @@ public class DependencyGraphBuilder
             .ToList();
 
         // Deduplicate same-direction edges; keep first occurrence
-        var seen = new HashSet<(string, string)>(StringComparer.OrdinalIgnoreCase.Equals);
+        var seen = new HashSet<(string, string)>();
         var edges = new List<DependencyEdge>();
         foreach (var edge in result.Dependencies)
         {
