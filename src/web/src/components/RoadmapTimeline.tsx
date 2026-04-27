@@ -16,8 +16,7 @@ export default function RoadmapTimeline({ roadmap }: RoadmapTimelineProps) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-center gap-4">
-        <span className="text-2xl font-bold">~{roadmap.estimatedWeeks} weeks</span>
-        <span className="text-gray-400">to {roadmap.targetFramework}</span>
+        <span className="text-gray-400">Target: {roadmap.targetFramework}</span>
       </div>
 
       <ol className="relative border-l border-gray-700 ml-4">
@@ -30,7 +29,6 @@ export default function RoadmapTimeline({ roadmap }: RoadmapTimelineProps) {
             <div className="ml-2">
               <h3 className="text-lg font-semibold">{phase.name}</h3>
               <p className="text-sm text-gray-400 mb-1">{phase.description}</p>
-              <span className="text-xs text-gray-500">{phase.estimatedWeeks}w</span>
 
               <ul className="mt-3 flex flex-col gap-2">
                 {phase.tasks.map((task, ti) => (

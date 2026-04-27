@@ -53,7 +53,42 @@ export const getRoadmap = (projectId: string) =>
     .get<MigrationRoadmap>(`/projects/${projectId}/roadmap`)
     .then((r) => r.data);
 
+// Download
+export const downloadTransformed = (projectId: string) =>
+  api.get(`/projects/${projectId}/download`, { responseType: "blob" }).then((r) => {
+    const url = URL.createObjectURL(r.data);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${projectId}_transformed.zip`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
+export const downloadFile = (projectId: string, filePath: string) =>
+  api.get(`/projects/${projectId}/download/file`, { params: { path: filePath }, responseType: "blob" }).then((r) => {
+    const url = URL.createObjectURL(r.data);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filePath.split("/").pop() ?? "transformed.cs";
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+
 // Transform
+export const applyContent = (projectId: string, filePath: string, content: string) =>
+  api
+    .post(`/projects/${projectId}/transform/apply-content`, { filePath, content })
+    .then((r) => r.data);
+
+export const modernizeFile = (projectId: string, filePath: string, targetFramework: string, apiKey?: string) =>
+  api
+    .post<TransformResult>(
+      `/projects/${projectId}/transform/modernize`,
+      { filePath, targetFramework },
+      apiKey ? { headers: { "X-Anthropic-Key": apiKey } } : undefined
+    )
+    .then((r) => r.data);
+
 export const previewTransform = (
   projectId: string,
   filePath: string,

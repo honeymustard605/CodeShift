@@ -1,9 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import FileUpload from "../components/FileUpload";
-import type { AnalysisResult } from "../types";
+import { getProjects } from "../api/client";
+import type { AnalysisResult, Project } from "../types";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const [recent, setRecent] = useState<Project[]>([]);
+
+  useEffect(() => {
+    getProjects().then((projects) => setRecent(projects.slice(0, 5)));
+  }, []);
 
   const handleAnalysisComplete = (projectId: string, _result: AnalysisResult) => {
     navigate(`/dashboard/${projectId}`);
@@ -38,6 +46,24 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+
+      {recent.length > 0 && (
+        <div className="w-full max-w-lg">
+          <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-widest mb-3">Recent Projects</h2>
+          <div className="flex flex-col gap-2">
+            {recent.map((p) => (
+              <Link
+                key={p.id}
+                to={`/dashboard/${p.id}`}
+                className="flex items-center justify-between rounded-lg bg-gray-900 border border-gray-800 px-4 py-3 hover:border-gray-600 transition-colors"
+              >
+                <span className="font-medium text-sm">{p.name}</span>
+                <span className="text-xs text-gray-500">{new Date(p.createdAt).toLocaleDateString()}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

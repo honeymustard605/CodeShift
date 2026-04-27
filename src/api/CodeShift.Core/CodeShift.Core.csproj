@@ -8,8 +8,9 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic" Version="4.8.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
-    <PackageReference Include="Anthropic.SDK" Version="3.2.2" />
+    <PackageReference Include="Anthropic.SDK" Version="*" />
   </ItemGroup>
 
   <ItemGroup>

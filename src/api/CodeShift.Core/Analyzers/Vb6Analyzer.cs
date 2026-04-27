@@ -39,14 +39,18 @@ public class Vb6Analyzer : ICodebaseAnalyzer
             {
                 var trimmed = line.TrimStart();
 
-                // Track object references as dependency edges
-                if (trimmed.StartsWith("Object=", StringComparison.OrdinalIgnoreCase))
+                // Track object references as dependency edges (handles "Object=" and "Object =")
+                if (trimmed.StartsWith("Object", StringComparison.OrdinalIgnoreCase))
                 {
-                    var objectRef = trimmed["Object=".Length..].Split(';')[0].Trim();
-                    edges.Add(new DependencyEdge(
-                        Source: Path.GetFileNameWithoutExtension(file),
-                        Target: objectRef,
-                        Kind: "vb6-ocx"));
+                    var eqIndex = trimmed.IndexOf('=');
+                    if (eqIndex > 0)
+                    {
+                        var objectRef = trimmed[(eqIndex + 1)..].Split(';')[0].Trim().Trim('"');
+                        edges.Add(new DependencyEdge(
+                            Source: Path.GetFileNameWithoutExtension(file),
+                            Target: objectRef,
+                            Kind: "vb6-ocx"));
+                    }
                 }
 
                 // High-risk VB6 patterns

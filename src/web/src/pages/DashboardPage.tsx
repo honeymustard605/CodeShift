@@ -46,6 +46,7 @@ export default function DashboardPage() {
           <Link to={`/graph/${projectId}`} className="text-brand-500 hover:underline">Dependency Graph</Link>
           <Link to={`/roadmap/${projectId}`} className="text-brand-500 hover:underline">Roadmap</Link>
           <Link to={`/transform/${projectId}`} className="text-brand-500 hover:underline">Transform</Link>
+          <Link to="/" className="text-gray-400 hover:underline">+ New Analysis</Link>
         </nav>
       </div>
 
