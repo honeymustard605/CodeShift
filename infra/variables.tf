@@ -7,13 +7,13 @@ variable "resource_group_name" {
 variable "location" {
   type        = string
   description = "Azure region"
-  default     = "eastus"
+  default     = "eastus2"
 }
 
 variable "environment" {
   type        = string
   description = "Deployment environment (dev, staging, prod)"
-  default     = "prod"
+  default     = "dev"
 }
 
 variable "app_service_sku" {
@@ -25,7 +25,7 @@ variable "app_service_sku" {
 variable "postgres_sku" {
   type        = string
   description = "Azure Database for PostgreSQL flexible server SKU"
-  default     = "Standard_B1ms"
+  default     = "B_Standard_B1ms"
 }
 
 variable "postgres_storage_mb" {
@@ -41,4 +41,26 @@ variable "postgres_admin_password" {
 variable "container_image" {
   type        = string
   description = "Full container image reference for the API"
+}
+
+variable "anthropic_api_key" {
+  type      = string
+  sensitive = true
+}
+
+variable "cors_origin" {
+  type        = string
+  description = "Allowed frontend origin, e.g. https://app.codeshift.io"
+}
+
+variable "owner" {
+  type        = string
+  description = "Owner tag value for all resources"
+  default     = "gregcook"
+}
+
+variable "cost_center" {
+  type        = string
+  description = "CostCenter tag value for all resources"
+  default     = "codeshift"
 }

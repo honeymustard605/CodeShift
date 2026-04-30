@@ -11,6 +11,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
+
+builder.WebHost.ConfigureKestrel(o =>
+    o.Limits.MaxRequestBodySize = 100 * 1024 * 1024); // 100 MB upload limit
 
 builder.Services.AddDbContext<CodeShiftDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
@@ -62,6 +66,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors();
 app.UseRateLimiter();
+
+app.MapHealthChecks("/health");
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CodeShiftDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 app.MapProjectEndpoints();
 app.MapAnalysisEndpoints();

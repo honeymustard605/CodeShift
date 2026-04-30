@@ -45,6 +45,11 @@ public static class ProjectEndpoints
             if (project is null) return Results.NotFound();
             db.Projects.Remove(project);
             await db.SaveChangesAsync();
+
+            var tempPath = Path.Combine(Path.GetTempPath(), "codeshift", id.ToString());
+            if (Directory.Exists(tempPath))
+                Directory.Delete(tempPath, recursive: true);
+
             return Results.NoContent();
         });
     }

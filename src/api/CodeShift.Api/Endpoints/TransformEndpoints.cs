@@ -7,6 +7,16 @@ public static class TransformEndpoints
 {
     private static readonly string[] Vb6Extensions = [".bas", ".cls", ".frm"];
 
+    private static string ProjectTempPath(Guid projectId) =>
+        Path.GetFullPath(Path.Combine(Path.GetTempPath(), "codeshift", projectId.ToString()));
+
+    private static bool IsPathSafe(Guid projectId, string filePath)
+    {
+        var allowedBase = ProjectTempPath(projectId);
+        var full = Path.GetFullPath(filePath);
+        return full.StartsWith(allowedBase + Path.DirectorySeparatorChar);
+    }
+
     public static void MapTransformEndpoints(this IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("/api/projects/{projectId:guid}/transform").WithTags("Transform");
@@ -21,6 +31,7 @@ public static class TransformEndpoints
         {
             var project = await db.Projects.FindAsync(projectId);
             if (project is null) return Results.NotFound();
+            if (!IsPathSafe(projectId, req.FilePath)) return Results.Problem("Invalid file path.", statusCode: 400);
 
             var result = Route(req.FilePath) switch
             {
@@ -42,6 +53,7 @@ public static class TransformEndpoints
         {
             var project = await db.Projects.FindAsync(projectId);
             if (project is null) return Results.NotFound();
+            if (!IsPathSafe(projectId, req.FilePath)) return Results.Problem("Invalid file path.", statusCode: 400);
 
             var result = Route(req.FilePath) switch
             {
@@ -60,11 +72,11 @@ public static class TransformEndpoints
         {
             var project = await db.Projects.FindAsync(projectId);
             if (project is null) return Results.NotFound();
+            if (!IsPathSafe(projectId, req.FilePath)) return Results.Problem("Invalid file path.", statusCode: 400);
 
             if (!File.Exists(req.FilePath))
-                return Results.Problem($"File not found: {req.FilePath}");
+                return Results.Problem("File not found.", statusCode: 404);
 
-            // Write to a .cs file alongside the original
             var outPath = Path.ChangeExtension(req.FilePath, ".cs");
             await File.WriteAllTextAsync(outPath, req.Content);
             return Results.Ok(new { path = outPath });
@@ -79,6 +91,7 @@ public static class TransformEndpoints
         {
             var project = await db.Projects.FindAsync(projectId);
             if (project is null) return Results.NotFound();
+            if (!IsPathSafe(projectId, req.FilePath)) return Results.Problem("Invalid file path.", statusCode: 400);
 
             var userApiKey = httpContext.Request.Headers["X-Anthropic-Key"].FirstOrDefault();
             var result = await ai.ModernizeAsync(req.FilePath, req.TargetFramework, userApiKey, CancellationToken.None);

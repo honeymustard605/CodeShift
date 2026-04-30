@@ -14,18 +14,21 @@ resource "azurerm_key_vault" "main" {
     secret_permissions = ["Get", "List", "Set", "Delete", "Purge"]
   }
 
-  # Allow the App Service managed identity to read secrets
-  access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id
-    object_id = azurerm_linux_web_app.api.identity[0].principal_id
+  tags = local.common_tags
+}
 
-    secret_permissions = ["Get", "List"]
-  }
+resource "azurerm_key_vault_access_policy" "api" {
+  key_vault_id = azurerm_key_vault.main.id
+  tenant_id    = data.azurerm_client_config.current.tenant_id
+  object_id    = azurerm_linux_web_app.api.identity[0].principal_id
 
-  tags = {
-    project     = "codeshift"
-    environment = var.environment
-  }
+  secret_permissions = ["Get", "List"]
+}
+
+resource "azurerm_key_vault_secret" "anthropic_api_key" {
+  name         = "anthropic-api-key"
+  key_vault_id = azurerm_key_vault.main.id
+  value        = var.anthropic_api_key
 }
 
 resource "azurerm_key_vault_secret" "db_connection" {

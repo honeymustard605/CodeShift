@@ -29,11 +29,16 @@ public static class DownloadEndpoints
             var project = await db.Projects.FindAsync(projectId);
             if (project is null) return Results.NotFound();
 
-            if (!File.Exists(path))
-                return Results.Problem($"File not found: {path}");
+            var allowedBase = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "codeshift", projectId.ToString()));
+            var fullPath = Path.GetFullPath(path);
+            if (!fullPath.StartsWith(allowedBase + Path.DirectorySeparatorChar) && fullPath != allowedBase)
+                return Results.Problem("Invalid file path.", statusCode: 400);
 
-            var bytes = await File.ReadAllBytesAsync(path);
-            var fileName = Path.GetFileName(path);
+            if (!File.Exists(fullPath))
+                return Results.Problem($"File not found.", statusCode: 404);
+
+            var bytes = await File.ReadAllBytesAsync(fullPath);
+            var fileName = Path.GetFileName(fullPath);
             return Results.File(bytes, "application/octet-stream", fileName);
         });
     }
