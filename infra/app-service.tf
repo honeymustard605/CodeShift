@@ -28,8 +28,8 @@ resource "azurerm_linux_web_app" "api" {
 
   app_settings = {
     ASPNETCORE_ENVIRONMENT   = var.environment == "prod" ? "Production" : "Development"
-    "ConnectionStrings__Default" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.db_connection.id})"
-    "Anthropic__ApiKey"      = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.anthropic_api_key.id})"
+    "ConnectionStrings__Default" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.db_connection.versionless_id})"
+    "Anthropic__ApiKey"      = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.anthropic_api_key.versionless_id})"
     "Cors__Origin"           = var.cors_origin
     WEBSITES_PORT            = "8080"
   }
